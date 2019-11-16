@@ -1,0 +1,83 @@
+#define MQ2pin (0)
+float sensorValue;  //variable to store sensor value
+float gas_value;
+
+
+const int sensorMin = 0;     // sensor minimum
+const int sensorMax = 1024;  // sensor maximum
+
+//int buzzer = 12;
+
+const int analogPin = A1;    // Flame Sensor (A0) to Arduino analog input pin A0
+const int BuzzerPin = 12;       // Buzzer output pin
+const int Highthreshold = 100;   // Flame level threshold (You can vary the value depends on your need)
+const int lowthreshold = 300;
+
+void setup()
+{
+  //MQ2 
+  Serial.begin(9600); // sets the serial port to 9600
+  Serial.println("Gas sensor warming up!");
+  delay(10000); // allow the MQ-6 to warm up
+
+   pinMode(BuzzerPin, OUTPUT);
+  // initialize serial communications: Serial.begin(9600);
+
+}
+/*void buzz() {
+  unsigned char i;
+  for ( i = 0; i < 80; i++) {
+    digitalWrite(buzzer,HIGH);
+    delay(2);
+    digitalWrite(buzzer,LOW);
+    delay(2);
+  }
+  for (i = 0; i < 100; i++) {
+    digitalWrite(buzzer,HIGH);
+    delay(2);
+    digitalWrite(buzzer,LOW);
+    delay(2);
+  }
+}*/
+
+void loop()
+{
+  //MQ2
+  sensorValue = analogRead(MQ2pin); // read analog input pin 0
+  
+  Serial.print("MQ2 Value: ");
+  Serial.print(sensorValue);
+  
+  if(sensorValue > 300)
+  {
+    Serial.print(" | Smoke detected!");
+   
+    
+  }
+  Serial.println("");
+  Serial.println("");
+  delay(2000); // wait 2s for next reading
+
+//flamethrower
+  // read the value of the Flame Sensor:
+  int analogValue = analogRead(analogPin);
+  Serial.print("Fire Value: "); 
+  Serial.println(analogValue); //serial print the FLAME sensor value
+  
+  if (analogValue < Highthreshold) {
+    Serial.println("High FLAME");
+    digitalWrite(BuzzerPin, HIGH);
+  } 
+  else if (analogValue <= lowthreshold && analogValue >= Highthreshold){ 
+    Serial.println("Low FLAME");
+    digitalWrite(BuzzerPin, HIGH);
+    delay(200);
+    digitalWrite(BuzzerPin, LOW);
+  }
+  else {
+    Serial.println("No flame");
+  }
+
+  delay(10);       
+}
+
